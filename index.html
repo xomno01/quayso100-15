@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quay Số May Mắn Pro - 15 Giải</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .number-display {
+            background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 4px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .glow-btn {
+            transition: all 0.3s ease;
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .history-item {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Modal Animation */
+        .modal-enter { opacity: 0; transform: scale(0.9); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 300ms, transform 300ms; }
+        .modal-exit { opacity: 1; }
+        .modal-exit-active { opacity: 0; transform: scale(0.9); transition: opacity 300ms, transform 300ms; }
+
+        /* Sphere Effect for Main Number */
+        .sphere-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), rgba(0,0,0,0.4));
+            box-shadow: 
+                inset 0 0 20px rgba(255, 215, 0, 0.2),
+                0 0 30px rgba(0,0,0,0.5),
+                0 0 60px rgba(255, 215, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white flex flex-col items-center justify-center p-4 overflow-hidden relative">
+
+    <!-- Decoration Background Elements -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-10 left-10 w-32 h-32 bg-yellow-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div class="absolute bottom-10 right-10 w-32 h-32 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
+        
+        <!-- Left Column: Settings/Info -->
+        <div class="hidden lg:flex flex-col justify-center items-start space-y-4">
+            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500 tracking-wider">
+                QUAY SỐ<br>TRÚNG THƯỞNG
+            </h1>
+            <p class="text-gray-400 text-sm">Chương trình tìm ra 15 người may mắn nhất.</p>
+            
+            <div class="glass-panel p-4 rounded-xl w-full">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-300 text-sm">Tổng số vé:</span>
+                    <span class="font-bold text-yellow-400">100</span>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-300 text-sm">Số lượng giải:</span>
+                    <span class="font-bold text-blue-400">15</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300 text-sm">Đã quay:</span>
+                    <span id="drawn-count" class="font-bold text-white">0</span>
+                </div>
+            </div>
+            
+            <button onclick="resetGame()" class="group flex items-center gap-2 text-gray-400 hover:text-red-400 transition-colors mt-4 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset Dữ Liệu
+            </button>
+        </div>
+
+        <!-- Center Column: The Machine -->
+        <div class="flex flex-col items-center justify-center">
+            
+            <!-- Mobile Title -->
+            <h1 class="lg:hidden text-3xl font-black text-center text-yellow-500 mb-6 tracking-widest">QUAY SỐ<br>TRÚNG THƯỞNG</h1>
+
+            <!-- Sphere Number Display -->
+            <div class="sphere-container mb-10 transition-transform duration-300 hover:scale-105">
+                <div id="display-number" class="number-display text-9xl font-black select-none">??</div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex gap-4">
+                <button id="spin-btn" onclick="startAutoSequence()" class="glow-btn bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold py-4 px-12 rounded-full text-xl shadow-lg hover:from-yellow-400 hover:to-amber-500 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:filter disabled:grayscale">
+                    QUAY SỐ
+                </button>
+            </div>
+            
+            <p id="status-text" class="mt-6 text-yellow-200/60 text-sm font-medium tracking-widest uppercase">Sẵn sàng</p>
+        </div>
+
+        <!-- Right Column: History -->
+        <div class="glass-panel rounded-2xl p-6 flex flex-col h-[500px] w-full lg:w-auto">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-700 pb-2">
+                <h3 class="text-lg font-bold text-yellow-500 uppercase tracking-wide">Danh sách trúng giải</h3>
+                <span class="bg-yellow-500/20 text-yellow-300 text-xs px-2 py-1 rounded-md" id="history-badge">0/15</span>
+            </div>
+            
+            <div id="history-list" class="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                <!-- History Items will be injected here -->
+                <div class="text-center text-gray-500 text-sm mt-10 italic" id="empty-history">
+                    Chưa có giải nào được trao
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Confirmation/Winner Modal Overlay -->
+    <div id="winner-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-gradient-to-br from-gray-800 to-black border border-yellow-500/30 p-1 rounded-2xl shadow-2xl transform scale-90 transition-transform duration-300" id="modal-content">
+            <div class="bg-gray-900 rounded-xl p-8 text-center relative overflow-hidden w-[90vw] max-w-md">
+                
+                <!-- Background rays effect in modal (Hidden initially) -->
+                <div id="modal-rays" class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-1000">
+                    <div class="w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_20deg,#fbbf24_40deg,transparent_60deg,transparent_360deg)] animate-spin-slow"></div>
+                </div>
+
+                <div class="relative z-10">
+                    <!-- Status Header -->
+                    <h2 id="modal-title" class="text-xl font-bold text-white mb-2 uppercase tracking-wider">Xác nhận kết quả</h2>
+                    <p id="modal-subtitle" class="text-gray-400 text-sm mb-6">Số được chọn là</p>
+                    
+                    <!-- The Big Number -->
+                    <div class="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 mb-8 drop-shadow-2xl transition-all duration-500" id="modal-number">
+                        00
+                    </div>
+
+                    <!-- Action Buttons Container -->
+                    <div id="modal-actions" class="flex flex-col gap-3">
+                        <!-- Step 1: Confirm Buttons -->
+                        <div id="step-confirm-btns" class="flex gap-3 justify-center w-full">
+                            <button onclick="rejectResult()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 px-4 rounded-lg font-medium transition-colors border border-gray-600">
+                                Quay Lại
+                            </button>
+                            <button onclick="confirmResult()" class="flex-1 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black py-3 px-4 rounded-lg font-bold transition-all shadow-lg hover:shadow-yellow-500/20">
+                                Xác Nhận
+                            </button>
+                        </div>
+                        
+                        <!-- Step 2: Close Buttons (Hidden initially) -->
+                        <div id="step-close-btns" class="hidden flex gap-3 justify-center w-full">
+                            <button onclick="closeModalAndCheckEnd()" class="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 px-6 rounded-lg font-medium transition-colors border border-gray-600">
+                                Tiếp tục quay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL SUMMARY MODAL -->
+    <div id="summary-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-md hidden opacity-0 transition-opacity duration-500">
+        <div class="bg-gradient-to-b from-gray-900 to-black border border-yellow-500 p-1 rounded-3xl shadow-2xl w-[95vw] max-w-4xl relative overflow-hidden transform scale-90 transition-transform duration-500" id="summary-content">
+            
+            <!-- Confetti Canvas for Summary -->
+            <canvas id="summary-confetti" class="absolute inset-0 pointer-events-none z-0"></canvas>
+
+            <div class="relative z-10 p-8 flex flex-col items-center h-[80vh]">
+                <h2 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 mb-2 text-center uppercase tracking-widest drop-shadow-lg">
+                    TỔNG KẾT TRAO GIẢI
+                </h2>
+                <p class="text-gray-400 mb-8 text-center">Danh sách 15 con số may mắn ngày hôm nay</p>
+
+                <div class="grid grid-cols-3 md:grid-cols-5 gap-4 w-full overflow-y-auto pr-2 custom-scrollbar pb-8" id="summary-grid">
+                    <!-- Grid items injected by JS -->
+                </div>
+
+                <div class="mt-auto pt-6 border-t border-gray-800 w-full flex justify-center">
+                    <button onclick="resetGame()" class="bg-gray-800 hover:bg-red-900/50 text-white hover:text-red-200 py-3 px-8 rounded-full font-bold transition-all border border-gray-700 hover:border-red-500/50 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Bắt đầu phiên mới
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const MIN_NUM = 1;
+        const MAX_NUM = 100;
+        const MAX_PRIZES = 15; // Giới hạn 15 giải
+        
+        let availableNumbers = Array.from({length: MAX_NUM}, (_, i) => i + 1);
+        let drawnHistory = [];
+        let isSpinning = false;
+        let spinInterval = null;
+        let pendingNumber = null;
+        let pendingIndex = null;
+
+        // DOM Elements
+        const displayEl = document.getElementById('display-number');
+        const spinBtn = document.getElementById('spin-btn');
+        const statusText = document.getElementById('status-text');
+        const historyListEl = document.getElementById('history-list');
+        const historyBadgeEl = document.getElementById('history-badge');
+        const drawnCountEl = document.getElementById('drawn-count');
+        const emptyHistoryEl = document.getElementById('empty-history');
+        
+        // Modal Elements
+        const modal = document.getElementById('winner-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalNumber = document.getElementById('modal-number');
+        const modalTitle = document.getElementById('modal-title');
+        const modalSubtitle = document.getElementById('modal-subtitle');
+        const modalRays = document.getElementById('modal-rays');
+        const stepConfirmBtns = document.getElementById('step-confirm-btns');
+        const stepCloseBtns = document.getElementById('step-close-btns');
+
+        // Summary Modal Elements
+        const summaryModal = document.getElementById('summary-modal');
+        const summaryContent = document.getElementById('summary-content');
+        const summaryGrid = document.getElementById('summary-grid');
+
+        // Auto Sequence Logic (Start -> Wait -> Stop Auto)
+        function startAutoSequence() {
+            if (availableNumbers.length === 0) {
+                alert("Đã quay hết tất cả các số!");
+                return;
+            }
+            if (drawnHistory.length >= MAX_PRIZES) {
+                showSummary();
+                return;
+            }
+
+            if (isSpinning) return; // Prevent double click
+
+            // 1. Start Spin
+            isSpinning = true;
+            spinBtn.disabled = true;
+            spinBtn.textContent = "ĐANG QUAY...";
+            spinBtn.classList.add('opacity-75', 'cursor-wait');
+            statusText.textContent = "Máy đang chạy...";
+            statusText.classList.add('animate-pulse');
+
+            let speed = 50;
+            spinInterval = setInterval(() => {
+                const visualNum = Math.floor(Math.random() * MAX_NUM) + 1;
+                updateDisplay(visualNum);
+            }, speed);
+
+            // 2. Auto Stop after 2.5 seconds
+            setTimeout(() => {
+                stopSpinAuto();
+            }, 2500);
+        }
+
+        function stopSpinAuto() {
+            clearInterval(spinInterval);
+            
+            // Deceleration effect
+            let counter = 0;
+            let slowDownRuns = 15;
+            let currentDelay = 40;
+
+            const slowDown = () => {
+                const visualNum = Math.floor(Math.random() * MAX_NUM) + 1;
+                updateDisplay(visualNum);
+
+                counter++;
+                if (counter < slowDownRuns) {
+                    currentDelay += counter * 5; 
+                    setTimeout(slowDown, currentDelay);
+                } else {
+                    prepareConfirmation();
+                }
+            };
+            slowDown();
+        }
+
+        function prepareConfirmation() {
+            // Pick winner
+            const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+            const candidate = availableNumbers[randomIndex];
+            
+            pendingNumber = candidate;
+            pendingIndex = randomIndex;
+
+            updateDisplay(candidate);
+            showConfirmationModal(candidate);
+        }
+
+        function updateDisplay(num) {
+            displayEl.textContent = num < 10 ? `0${num}` : num;
+        }
+
+        // --- MODAL LOGIC ---
+
+        function showConfirmationModal(num) {
+            modalTitle.textContent = "Kết quả quay số";
+            modalSubtitle.textContent = "Xác nhận kết quả giải thưởng?";
+            modalSubtitle.className = "text-gray-400 text-sm mb-6";
+            
+            modalNumber.textContent = num < 10 ? `0${num}` : num;
+            modalNumber.className = "text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 mb-8 drop-shadow-2xl transition-all duration-500";
+            
+            stepConfirmBtns.classList.remove('hidden');
+            stepCloseBtns.classList.add('hidden');
+            modalRays.classList.remove('opacity-20');
+            modalRays.classList.add('opacity-0');
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-90');
+        }
+
+        function rejectResult() {
+            closeModal();
+            statusText.textContent = "Đã hủy. Sẵn sàng quay lại.";
+            statusText.classList.remove('animate-pulse');
+            resetSpinButton();
+        }
+
+        function confirmResult() {
+            // Data Update
+            availableNumbers.splice(pendingIndex, 1);
+            drawnHistory.unshift(pendingNumber);
+
+            // UI Update
+            drawnCountEl.textContent = drawnHistory.length;
+            
+            addToHistory(pendingNumber);
+
+            // Modal Update to Winner State
+            const prizeIndex = MAX_PRIZES - drawnHistory.length + 1; // Reverse count or just current count
+            modalTitle.textContent = "XIN CHÚC MỪNG!";
+            modalTitle.className = "text-2xl font-bold text-yellow-500 mb-2 uppercase tracking-wider animate-bounce";
+            
+            modalSubtitle.textContent = `Chủ nhân giải thưởng số ${drawnHistory.length}`;
+            modalSubtitle.className = "text-yellow-200 text-sm mb-6";
+
+            modalNumber.className = "text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 mb-8 drop-shadow-2xl scale-110 transition-all duration-500";
+
+            modalRays.classList.remove('opacity-0');
+            modalRays.classList.add('opacity-20');
+
+            stepConfirmBtns.classList.add('hidden');
+            stepCloseBtns.classList.remove('hidden');
+
+            triggerConfetti();
+            statusText.textContent = `Đã tìm ra ${drawnHistory.length}/15 giải!`;
+            statusText.classList.remove('animate-pulse');
+        }
+
+        function closeModalAndCheckEnd() {
+            closeModal();
+            // Check if we reached 15 prizes
+            if (drawnHistory.length >= MAX_PRIZES) {
+                setTimeout(() => {
+                    showSummary();
+                }, 500);
+            } else {
+                resetSpinButton();
+            }
+        }
+
+        function resetSpinButton() {
+            isSpinning = false;
+            if (drawnHistory.length >= MAX_PRIZES) {
+                spinBtn.textContent = "XEM TỔNG KẾT";
+                spinBtn.onclick = showSummary;
+                spinBtn.disabled = false;
+                spinBtn.classList.replace('from-yellow-500', 'from-blue-600');
+                spinBtn.classList.replace('to-amber-600', 'to-blue-500');
+                statusText.textContent = "Đã hoàn thành 15 giải!";
+            } else {
+                spinBtn.textContent = "QUAY SỐ";
+                spinBtn.disabled = false;
+                spinBtn.classList.remove('opacity-75', 'cursor-wait');
+            }
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-90');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // --- SUMMARY MODAL ---
+        function showSummary() {
+            summaryGrid.innerHTML = '';
+            
+            // Create grid items for all winners (reverse to show 1st to 15th logic, or order drawn)
+            // Display in order drawn (First drawn is Prize 1, or last drawn is Prize 1? Usually First drawn is lowest prize, Last is Grand Prize. But here we just list them).
+            // Let's list them in order: Giải 1, Giải 2... (based on draw order)
+            
+            // clone array and reverse to show 1st drawn at top if desired, or just list as is.
+            // Let's show: [Number] - [Prize #]
+            const sortedHistory = [...drawnHistory].reverse(); // Make 1st drawn first item
+            
+            sortedHistory.forEach((num, index) => {
+                const div = document.createElement('div');
+                div.className = "bg-white/10 border border-yellow-500/30 rounded-xl p-4 flex flex-col items-center justify-center animate-popIn";
+                div.style.animationDelay = `${index * 100}ms`;
+                div.innerHTML = `
+                    <span class="text-xs text-yellow-500/70 mb-1 uppercase tracking-wider">Giải ${index + 1}</span>
+                    <span class="text-4xl font-black text-white">${num < 10 ? '0'+num : num}</span>
+                `;
+                summaryGrid.appendChild(div);
+            });
+
+            summaryModal.classList.remove('hidden');
+            void summaryModal.offsetWidth;
+            summaryModal.classList.remove('opacity-0');
+            summaryContent.classList.remove('scale-90');
+
+            // Fireworks for summary
+            launchSummaryFireworks();
+        }
+
+        function launchSummaryFireworks() {
+            const duration = 5000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 70 };
+
+            const randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+
+        // --- UTILS & HELPERS ---
+
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function addToHistory(num) {
+            if (emptyHistoryEl) emptyHistoryEl.style.display = 'none';
+            
+            const div = document.createElement('div');
+            div.className = 'history-item flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-colors';
+            
+            const count = drawnHistory.length;
+            
+            div.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="flex items-center justify-center min-w-[32px] h-8 rounded-full bg-yellow-500 text-black font-bold text-sm">
+                        ${count}
+                    </span>
+                    <span class="text-xs text-gray-400">Giải ${count}</span>
+                </div>
+                <span class="text-xl font-bold text-yellow-400">${num < 10 ? '0'+num : num}</span>
+            `;
+            
+            historyListEl.prepend(div);
+            historyBadgeEl.textContent = `${drawnHistory.length}/${MAX_PRIZES}`;
+        }
+
+        function resetGame() {
+            if(!confirm("Bạn có chắc chắn muốn xóa lịch sử và bắt đầu lại?")) return;
+            
+            // Hide summary modal if open
+            summaryModal.classList.add('opacity-0');
+            setTimeout(() => {
+                summaryModal.classList.add('hidden');
+            }, 500);
+
+            availableNumbers = Array.from({length: MAX_NUM}, (_, i) => i + 1);
+            drawnHistory = [];
+            historyListEl.innerHTML = '';
+            historyListEl.appendChild(emptyHistoryEl);
+            emptyHistoryEl.style.display = 'block';
+            historyBadgeEl.textContent = '0/15';
+            drawnCountEl.textContent = '0';
+            updateDisplay('??');
+            statusText.textContent = "Sẵn sàng";
+            resetSpinButton();
+            
+            // Revert button color from Blue (Summary state) to Yellow
+            spinBtn.classList.replace('from-blue-600', 'from-yellow-500');
+            spinBtn.classList.replace('to-blue-500', 'to-amber-600');
+        }
+
+        // Styles
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes spin-slow {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            @keyframes popIn {
+                0% { opacity: 0; transform: scale(0.5); }
+                70% { transform: scale(1.1); }
+                100% { opacity: 1; transform: scale(1); }
+            }
+            .animate-spin-slow {
+                animation: spin-slow 10s linear infinite;
+            }
+            .animate-popIn {
+                animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                opacity: 0; 
+            }
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 6px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 10px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: rgba(255, 215, 0, 0.3);
+                border-radius: 10px;
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>
