@@ -182,6 +182,24 @@
             background-color: #cbd5e1;
         }
 
+        /* Light Mode Summary Buttons */
+        body.light-mode .summary-btn-close {
+            background-color: #e2e8f0 !important;
+            color: #334155 !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode .summary-btn-close:hover {
+            background-color: #cbd5e1 !important;
+        }
+        body.light-mode .summary-btn-reset {
+            background-color: #b91c1c !important; /* Red 700 */
+            color: #ffffff !important;
+            border-color: #991b1b !important;
+        }
+        body.light-mode .summary-btn-reset:hover {
+            background-color: #991b1b !important;
+        }
+
         /* Theme Toggle Button */
         .theme-toggle-btn {
             position: absolute;
@@ -368,9 +386,14 @@
                     <!-- Grid items injected by JS -->
                 </div>
 
-                <div class="mt-auto pt-6 border-t border-gray-800 w-full flex justify-center relative z-50">
-                    <!-- Added relative z-50 and cursor-pointer to ensure clickability -->
-                    <button onclick="resetGame()" class="bg-gray-800 hover:bg-red-900/50 text-white hover:text-red-200 py-3 px-8 rounded-full font-bold transition-all border border-gray-700 hover:border-red-500/50 flex items-center gap-2 cursor-pointer shadow-lg hover:shadow-red-900/40">
+                <div class="mt-auto pt-6 border-t border-gray-800 w-full flex justify-center gap-4 relative z-50">
+                    <!-- Close Button -->
+                    <button onclick="closeSummary()" class="summary-btn-close bg-gray-700 hover:bg-gray-600 text-white py-3 px-8 rounded-full font-bold transition-all border border-gray-600 flex items-center gap-2 cursor-pointer shadow-lg">
+                        Đóng
+                    </button>
+                    
+                    <!-- Reset Button -->
+                    <button onclick="resetGame()" class="summary-btn-reset bg-gray-800 hover:bg-red-900/50 text-white hover:text-red-200 py-3 px-8 rounded-full font-bold transition-all border border-gray-700 hover:border-red-500/50 flex items-center gap-2 cursor-pointer shadow-lg hover:shadow-red-900/40">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
@@ -565,6 +588,8 @@
             closeModal();
             // Check if we reached 15 prizes
             if (drawnHistory.length >= MAX_PRIZES) {
+                // Update Button State BEFORE showing summary, so if closed, the button is correct
+                resetSpinButton();
                 setTimeout(() => {
                     showSummary();
                 }, 500);
@@ -576,6 +601,7 @@
         function resetSpinButton() {
             isSpinning = false;
             if (drawnHistory.length >= MAX_PRIZES) {
+                // Game Finished State
                 spinBtn.textContent = "XEM TỔNG KẾT";
                 spinBtn.onclick = showSummary;
                 spinBtn.disabled = false;
@@ -583,9 +609,17 @@
                 spinBtn.classList.replace('to-amber-600', 'to-blue-500');
                 statusText.textContent = "Đã hoàn thành 15 giải!";
             } else {
+                // Playing State
                 spinBtn.textContent = "QUAY SỐ";
+                spinBtn.onclick = startAutoSequence; // Ensure handler is reset
                 spinBtn.disabled = false;
                 spinBtn.classList.remove('opacity-75', 'cursor-wait');
+                
+                // Reset colors if needed (from blue back to yellow/amber)
+                if (spinBtn.classList.contains('from-blue-600')) {
+                    spinBtn.classList.replace('from-blue-600', 'from-yellow-500');
+                    spinBtn.classList.replace('to-blue-500', 'to-amber-600');
+                }
             }
         }
 
@@ -621,6 +655,14 @@
 
             // Fireworks for summary
             launchSummaryFireworks();
+        }
+
+        function closeSummary() {
+            summaryModal.classList.add('opacity-0');
+            summaryContent.classList.add('scale-90');
+            setTimeout(() => {
+                summaryModal.classList.add('hidden');
+            }, 500);
         }
 
         function launchSummaryFireworks() {
@@ -705,10 +747,7 @@
             drawnCountEl.textContent = '0';
             updateDisplay('??');
             statusText.textContent = "Sẵn sàng";
-            resetSpinButton();
-            
-            spinBtn.classList.replace('from-blue-600', 'from-yellow-500');
-            spinBtn.classList.replace('to-blue-500', 'to-amber-600');
+            resetSpinButton(); // This will reset color and click handler
         }
 
         // Styles
