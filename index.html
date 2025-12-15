@@ -11,6 +11,7 @@
         body {
             font-family: 'Montserrat', sans-serif;
             background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            transition: background 0.5s ease;
         }
         
         .glass-panel {
@@ -18,8 +19,10 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: background 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
         }
 
+        /* Default Dark Mode Number Display */
         .number-display {
             background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
             -webkit-background-clip: text;
@@ -65,10 +68,168 @@
             align-items: center;
             justify-content: center;
             border: 2px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.5s ease;
+        }
+
+        /* --- LIGHT MODE STYLES (UPDATED HIGH CONTRAST) --- */
+        body.light-mode {
+            background: radial-gradient(circle at center, #f0f9ff 0%, #e0f2fe 100%);
+            color: #0f172a;
+        }
+
+        body.light-mode .glass-panel {
+            background: #ffffff; /* Solid white instead of transparent */
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Title Override for Light Mode */
+        body.light-mode h1 {
+            background: none !important;
+            -webkit-text-fill-color: #0f172a !important; /* Dark Slate Blue */
+            text-shadow: none;
+            color: #0f172a;
+        }
+        /* Subtext colors */
+        body.light-mode p.text-gray-400 { color: #64748b; }
+        body.light-mode span.text-gray-300 { color: #475569; }
+        
+        /* Stats colors */
+        body.light-mode #drawn-count { color: #0f172a; }
+        body.light-mode .text-yellow-400 { color: #b45309; } /* Darker Amber */
+        body.light-mode .text-yellow-500 { color: #b45309; } /* Darker Amber */
+        body.light-mode #status-text { color: #b45309; font-weight: 800; }
+        
+        /* Light Mode Sphere */
+        body.light-mode .sphere-container {
+            background: radial-gradient(circle at 30% 30%, #ffffff, #f1f5f9);
+            box-shadow: 
+                inset 0 0 20px rgba(0, 0, 0, 0.05),
+                0 20px 40px rgba(0,0,0,0.1),
+                0 0 0 4px #ffffff,
+                0 0 0 8px #fbbf24; /* Solid Amber Ring */
+            border: none;
+        }
+        
+        /* Light Mode Number Display */
+        body.light-mode .number-display {
+            background: none;
+            -webkit-text-fill-color: #b45309; /* Dark Amber */
+            color: #b45309;
+            text-shadow: none;
+        }
+        
+        /* Light Mode History Item */
+        body.light-mode .history-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+        }
+        body.light-mode .history-item:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        body.light-mode #history-list .text-white { color: #0f172a; } /* Number inside history */
+        body.light-mode #history-list .text-gray-400 { color: #64748b; }
+        body.light-mode #history-list .text-yellow-400 { color: #b45309; }
+        body.light-mode #empty-history { color: #94a3b8; }
+
+        /* Light Mode Modals */
+        body.light-mode #modal-content {
+            background: #ffffff;
+            border: 2px solid #fbbf24;
+            color: #0f172a;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        body.light-mode #modal-content .bg-gray-900 { background: transparent; }
+        body.light-mode #modal-title { color: #b45309; text-shadow: none; }
+        body.light-mode #modal-subtitle { color: #64748b; }
+        body.light-mode #modal-number { 
+            background: none;
+            -webkit-text-fill-color: #d97706;
+            color: #d97706;
+            text-shadow: none;
+        }
+
+        /* Light Mode Summary Grid */
+        body.light-mode #summary-content {
+            background: #f8fafc;
+            border: 2px solid #fbbf24;
+            color: #0f172a;
+        }
+        body.light-mode #summary-content h2 { 
+            background: none !important; 
+            -webkit-text-fill-color: #b45309 !important;
+            color: #b45309;
+        }
+        body.light-mode #summary-grid .bg-white\/10 {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        body.light-mode #summary-grid .text-white { color: #0f172a; }
+        body.light-mode #summary-grid .text-yellow-500\/70 { color: #b45309; font-weight: 700; }
+        
+        /* Light Mode Buttons */
+        body.light-mode #step-confirm-btns button:first-child,
+        body.light-mode #step-close-btns button {
+            background-color: #e2e8f0;
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+        }
+        body.light-mode #step-confirm-btns button:first-child:hover,
+        body.light-mode #step-close-btns button:hover {
+            background-color: #cbd5e1;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 50;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        body:not(.light-mode) .theme-toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fbbf24;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body:not(.light-mode) .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+        }
+        body.light-mode .theme-toggle-btn {
+            background: #ffffff;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        body.light-mode .theme-toggle-btn:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body class="min-h-screen text-white flex flex-col items-center justify-center p-4 overflow-hidden relative">
+<body class="min-h-screen text-white flex flex-col items-center justify-center p-4 overflow-hidden relative transition-colors duration-500">
+
+    <!-- Theme Toggle Button -->
+    <button onclick="toggleTheme()" class="theme-toggle-btn" title="Chuyển đổi giao diện">
+        <!-- SVG Icon will be set by JS -->
+        <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Default Moon Icon -->
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+    </button>
 
     <!-- Decoration Background Elements -->
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
@@ -81,19 +242,19 @@
         
         <!-- Left Column: Settings/Info -->
         <div class="hidden lg:flex flex-col justify-center items-start space-y-4">
-            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500 tracking-wider">
+            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500 tracking-wider drop-shadow-sm">
                 QUAY SỐ<br>TRÚNG THƯỞNG
             </h1>
-            <p class="text-gray-400 text-sm">Chương trình tìm ra 15 người may mắn nhất.</p>
+            <p class="text-gray-400 text-sm font-medium">Chương trình tìm ra 15 người may mắn nhất.</p>
             
             <div class="glass-panel p-4 rounded-xl w-full">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-gray-300 text-sm">Tổng số vé:</span>
-                    <span class="font-bold text-yellow-400">100</span>
+                    <span class="font-bold text-yellow-500">100</span>
                 </div>
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-gray-300 text-sm">Số lượng giải:</span>
-                    <span class="font-bold text-blue-400">15</span>
+                    <span class="font-bold text-blue-500">15</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-300 text-sm">Đã quay:</span>
@@ -101,7 +262,7 @@
                 </div>
             </div>
             
-            <button onclick="resetGame()" class="group flex items-center gap-2 text-gray-400 hover:text-red-400 transition-colors mt-4 text-sm">
+            <button onclick="resetGame()" class="group flex items-center gap-2 text-gray-400 hover:text-red-500 transition-colors mt-4 text-sm font-semibold">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
@@ -113,7 +274,7 @@
         <div class="flex flex-col items-center justify-center">
             
             <!-- Mobile Title -->
-            <h1 class="lg:hidden text-3xl font-black text-center text-yellow-500 mb-6 tracking-widest">QUAY SỐ<br>TRÚNG THƯỞNG</h1>
+            <h1 class="lg:hidden text-3xl font-black text-center text-yellow-500 mb-6 tracking-widest drop-shadow-md">QUAY SỐ<br>TRÚNG THƯỞNG</h1>
 
             <!-- Sphere Number Display -->
             <div class="sphere-container mb-10 transition-transform duration-300 hover:scale-105">
@@ -122,19 +283,19 @@
 
             <!-- Controls -->
             <div class="flex gap-4">
-                <button id="spin-btn" onclick="startAutoSequence()" class="glow-btn bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold py-4 px-12 rounded-full text-xl shadow-lg hover:from-yellow-400 hover:to-amber-500 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:filter disabled:grayscale">
+                <button id="spin-btn" onclick="startAutoSequence()" class="glow-btn bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold py-4 px-12 rounded-full text-xl shadow-lg hover:from-yellow-400 hover:to-amber-500 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:filter disabled:grayscale transition-all">
                     QUAY SỐ
                 </button>
             </div>
             
-            <p id="status-text" class="mt-6 text-yellow-200/60 text-sm font-medium tracking-widest uppercase">Sẵn sàng</p>
+            <p id="status-text" class="mt-6 text-yellow-200/60 text-sm font-medium tracking-widest uppercase transition-colors">Sẵn sàng</p>
         </div>
 
         <!-- Right Column: History -->
         <div class="glass-panel rounded-2xl p-6 flex flex-col h-[500px] w-full lg:w-auto">
-            <div class="flex items-center justify-between mb-4 border-b border-gray-700 pb-2">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-500/30 pb-2">
                 <h3 class="text-lg font-bold text-yellow-500 uppercase tracking-wide">Danh sách trúng giải</h3>
-                <span class="bg-yellow-500/20 text-yellow-300 text-xs px-2 py-1 rounded-md" id="history-badge">0/15</span>
+                <span class="bg-yellow-500/20 text-yellow-600 font-bold text-xs px-2 py-1 rounded-md" id="history-badge">0/15</span>
             </div>
             
             <div id="history-list" class="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
@@ -149,7 +310,7 @@
     <!-- Confirmation/Winner Modal Overlay -->
     <div id="winner-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div class="bg-gradient-to-br from-gray-800 to-black border border-yellow-500/30 p-1 rounded-2xl shadow-2xl transform scale-90 transition-transform duration-300" id="modal-content">
-            <div class="bg-gray-900 rounded-xl p-8 text-center relative overflow-hidden w-[90vw] max-w-md">
+            <div class="bg-gray-900 rounded-xl p-8 text-center relative overflow-hidden w-[90vw] max-w-md transition-colors">
                 
                 <!-- Background rays effect in modal (Hidden initially) -->
                 <div id="modal-rays" class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-1000">
@@ -194,21 +355,22 @@
     <div id="summary-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-md hidden opacity-0 transition-opacity duration-500">
         <div class="bg-gradient-to-b from-gray-900 to-black border border-yellow-500 p-1 rounded-3xl shadow-2xl w-[95vw] max-w-4xl relative overflow-hidden transform scale-90 transition-transform duration-500" id="summary-content">
             
-            <!-- Confetti Canvas for Summary -->
-            <canvas id="summary-confetti" class="absolute inset-0 pointer-events-none z-0"></canvas>
+            <!-- Confetti Canvas for Summary - FIXED: z-0 to be behind content -->
+            <canvas id="summary-confetti" class="absolute inset-0 pointer-events-none z-0 w-full h-full"></canvas>
 
             <div class="relative z-10 p-8 flex flex-col items-center h-[80vh]">
                 <h2 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 mb-2 text-center uppercase tracking-widest drop-shadow-lg">
                     TỔNG KẾT TRAO GIẢI
                 </h2>
-                <p class="text-gray-400 mb-8 text-center">Danh sách 15 con số may mắn ngày hôm nay</p>
+                <p class="text-gray-400 mb-8 text-center font-medium">Danh sách 15 con số may mắn ngày hôm nay</p>
 
                 <div class="grid grid-cols-3 md:grid-cols-5 gap-4 w-full overflow-y-auto pr-2 custom-scrollbar pb-8" id="summary-grid">
                     <!-- Grid items injected by JS -->
                 </div>
 
-                <div class="mt-auto pt-6 border-t border-gray-800 w-full flex justify-center">
-                    <button onclick="resetGame()" class="bg-gray-800 hover:bg-red-900/50 text-white hover:text-red-200 py-3 px-8 rounded-full font-bold transition-all border border-gray-700 hover:border-red-500/50 flex items-center gap-2">
+                <div class="mt-auto pt-6 border-t border-gray-800 w-full flex justify-center relative z-50">
+                    <!-- Added relative z-50 and cursor-pointer to ensure clickability -->
+                    <button onclick="resetGame()" class="bg-gray-800 hover:bg-red-900/50 text-white hover:text-red-200 py-3 px-8 rounded-full font-bold transition-all border border-gray-700 hover:border-red-500/50 flex items-center gap-2 cursor-pointer shadow-lg hover:shadow-red-900/40">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
@@ -220,6 +382,23 @@
     </div>
 
     <script>
+        // Theme Logic
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('theme-icon');
+            
+            if (document.body.classList.contains('light-mode')) {
+                // Active: Light Mode -> Show Moon Icon
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
+            } else {
+                // Active: Dark Mode -> Show Sun Icon
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
+            }
+        }
+
+        // Initialize with Sun Icon (since default is Dark)
+        document.getElementById('theme-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
+
         // Game State
         const MIN_NUM = 1;
         const MAX_NUM = 100;
@@ -333,10 +512,8 @@
         function showConfirmationModal(num) {
             modalTitle.textContent = "Kết quả quay số";
             modalSubtitle.textContent = "Xác nhận kết quả giải thưởng?";
-            modalSubtitle.className = "text-gray-400 text-sm mb-6";
             
             modalNumber.textContent = num < 10 ? `0${num}` : num;
-            modalNumber.className = "text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 mb-8 drop-shadow-2xl transition-all duration-500";
             
             stepConfirmBtns.classList.remove('hidden');
             stepCloseBtns.classList.add('hidden');
@@ -367,14 +544,11 @@
             addToHistory(pendingNumber);
 
             // Modal Update to Winner State
-            const prizeIndex = MAX_PRIZES - drawnHistory.length + 1; // Reverse count or just current count
             modalTitle.textContent = "XIN CHÚC MỪNG!";
             modalTitle.className = "text-2xl font-bold text-yellow-500 mb-2 uppercase tracking-wider animate-bounce";
             
             modalSubtitle.textContent = `Chủ nhân giải thưởng số ${drawnHistory.length}`;
-            modalSubtitle.className = "text-yellow-200 text-sm mb-6";
-
-            modalNumber.className = "text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 mb-8 drop-shadow-2xl scale-110 transition-all duration-500";
+            // Color handled by CSS (dark/light)
 
             modalRays.classList.remove('opacity-0');
             modalRays.classList.add('opacity-20');
@@ -427,20 +601,14 @@
         function showSummary() {
             summaryGrid.innerHTML = '';
             
-            // Create grid items for all winners (reverse to show 1st to 15th logic, or order drawn)
-            // Display in order drawn (First drawn is Prize 1, or last drawn is Prize 1? Usually First drawn is lowest prize, Last is Grand Prize. But here we just list them).
-            // Let's list them in order: Giải 1, Giải 2... (based on draw order)
-            
-            // clone array and reverse to show 1st drawn at top if desired, or just list as is.
-            // Let's show: [Number] - [Prize #]
-            const sortedHistory = [...drawnHistory].reverse(); // Make 1st drawn first item
+            const sortedHistory = [...drawnHistory].reverse(); 
             
             sortedHistory.forEach((num, index) => {
                 const div = document.createElement('div');
                 div.className = "bg-white/10 border border-yellow-500/30 rounded-xl p-4 flex flex-col items-center justify-center animate-popIn";
                 div.style.animationDelay = `${index * 100}ms`;
                 div.innerHTML = `
-                    <span class="text-xs text-yellow-500/70 mb-1 uppercase tracking-wider">Giải ${index + 1}</span>
+                    <span class="text-xs text-yellow-500/70 mb-1 uppercase tracking-wider font-bold">Giải ${index + 1}</span>
                     <span class="text-4xl font-black text-white">${num < 10 ? '0'+num : num}</span>
                 `;
                 summaryGrid.appendChild(div);
@@ -456,9 +624,20 @@
         }
 
         function launchSummaryFireworks() {
+            // FIXED: Use specific canvas inside the modal instead of global canvas
+            const myCanvas = document.getElementById('summary-confetti');
+            // Reset width/height to match container
+            myCanvas.width = summaryContent.clientWidth;
+            myCanvas.height = summaryContent.clientHeight;
+
+            const myConfetti = confetti.create(myCanvas, {
+                resize: true,
+                useWorker: true
+            });
+
             const duration = 5000;
             const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 70 };
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60 };
 
             const randomInRange = (min, max) => Math.random() * (max - min) + min;
 
@@ -470,8 +649,9 @@
                 }
 
                 const particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                
+                myConfetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                myConfetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
         }
 
@@ -511,7 +691,6 @@
         function resetGame() {
             if(!confirm("Bạn có chắc chắn muốn xóa lịch sử và bắt đầu lại?")) return;
             
-            // Hide summary modal if open
             summaryModal.classList.add('opacity-0');
             setTimeout(() => {
                 summaryModal.classList.add('hidden');
@@ -528,7 +707,6 @@
             statusText.textContent = "Sẵn sàng";
             resetSpinButton();
             
-            // Revert button color from Blue (Summary state) to Yellow
             spinBtn.classList.replace('from-blue-600', 'from-yellow-500');
             spinBtn.classList.replace('to-blue-500', 'to-amber-600');
         }
@@ -562,6 +740,14 @@
             .custom-scrollbar::-webkit-scrollbar-thumb {
                 background: rgba(255, 215, 0, 0.3);
                 border-radius: 10px;
+            }
+            
+            /* Light mode scrollbar */
+            .light-mode .custom-scrollbar::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05);
+            }
+            .light-mode .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: rgba(251, 191, 36, 0.5);
             }
         `;
         document.head.appendChild(styleSheet);
